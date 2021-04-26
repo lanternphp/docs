@@ -1,27 +1,21 @@
 module.exports = [
   {
-    title: 'Basics',
+    title: 'Docs',
     collapsable: false,
     children: [
       '',
-      'installation',
+      'features-actions',
+      'constraints-availability',
+      'authorisation',
       'directory-structure',
-      'basic-config',
-      'assets',
-      'markdown',
-      'using-vue',
-      'i18n',
-      'deploy',
+      'configuration',
     ]
   },
-  {
-    title: 'Advanced',
+  /*{
+    title: 'Dig deeper',
     collapsable: false,
     children: [
-      'frontmatter',
-      'permalinks',
-      'markdown-slot',
-      'global-computed'
+      'laravel-debugging',
     ]
-  }
+  }*/
 ]

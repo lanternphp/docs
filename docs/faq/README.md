@@ -20,13 +20,12 @@ Sure, but Lantern is more than just code organisation. It uses the way ==Actions
 integrate more deeply into Laravel. For example, each action automatically registers an [Authorisation Gate](https://laravel.com/docs/master/authorization#gates)
 so you can easily check what the current user is able to do. You can't do that with a controller.
 
-Beyond that, it's also likely that you'll have your own Artisan commands, so controllers never really tell the whole story.
+Beyond this, it's also likely you'll have your own Artisan commands, or you organise your controllers using [resource controllers](https://laravel.com/docs/master/controllers#resource-controllers)
+which do not reflect the entirety of your domain model.
 
 ## What's on the horizon for Lantern?
 
-We're always looking at ways of improving Lantern, and more deeply integrating with Laravel so you get more 
+We're always looking at ways of improving Lantern, and more deeply integrating with Laravel, so you get more 
 out-of-the-box functionality for free.
-
-You can see our roadmap here. @todo – add a roadmap
 
 If you have any ideas on how to improve Lantern, [let us know](https://github.com/lanternphp/lantern/issues/new).  

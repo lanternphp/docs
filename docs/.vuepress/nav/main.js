@@ -4,10 +4,6 @@ module.exports = [
     link: '/documentation/',
   },
   {
-    text: 'Config Reference',
-    link: '/config/'
-  },
-  {
     text: 'Learn More',
     items: [
       {

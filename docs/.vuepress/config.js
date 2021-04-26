@@ -15,7 +15,7 @@ module.exports = ctx => ({
     ['meta', { name: 'msapplication-TileColor', content: '#000000' }]
   ],
   themeConfig: {
-    repo: 'lanternphp/framework',
+    repo: 'lanternphp/lantern',
     editLinks: false,
     docsDir: 'docs',
     // #697 Provided by the official algolia team.
@@ -25,7 +25,10 @@ module.exports = ctx => ({
     // }) : null,
     editLinkText: 'Edit this page on GitHub',
     nav: require('./nav/main'),
-    lastUpdated: 'Last Updated',
+    lastUpdated: false,
+
+    nextLinks: true,
+    prevLinks: true,
 
     sidebar: {
       '/documentation/': require('./nav/documentation'),
@@ -33,10 +36,6 @@ module.exports = ctx => ({
   },
   plugins: [
     ['@vuepress/back-to-top', true],
-    ['@vuepress/pwa', {
-      serviceWorker: true,
-      updatePopup: true
-    }],
     ['@vuepress/medium-zoom', true],
     ['container', {
       type: 'vue',
@@ -47,7 +46,7 @@ module.exports = ctx => ({
       type: 'upgrade',
       before: info => `<UpgradePath title="${info}">`,
       after: '</UpgradePath>',
-    }],
+    }]
   ],
   extraWatchFiles: [
     '.vuepress/nav/main.js',
@@ -59,5 +58,11 @@ module.exports = ctx => ({
       md.use(require('markdown-it-task-lists'));
       md.use(require('markdown-it-mark'));
     }
-  }
+  },
+  meta: [
+    ['@vuepress/pwa', {
+      serviceWorker: false,
+      updatePopup: false
+    }],
+  ]
 })

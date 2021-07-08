@@ -43,12 +43,3 @@ Start small with a single action:<br>
 [Get started →](/documentation/) 👣
 
 </div></div>
-
-By following Lantern’s conventions in organising your domain code, you get extra stuff thrown in for free:
-
-- [x] Easy to scan the file structure 
-- [x] Apply system constraints to an action or feature, such as whether a particular binary can be found
-- [x] Restrict availability of an action according to the current user, the current state of your domain model …etc.  
-- [x] Each action registers an authorisation gate that can be checked from middleware, a controller, a blade template  
-- [ ] Record the most recent actions performed by each user? 
-- [ ] Add in session-level debug info to an exception when it occurs, e.g. the action history of the user? 

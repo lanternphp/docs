@@ -6,17 +6,18 @@ During the setup process, Lantern will register a [Laravel gate](https://laravel
 with the [id of each Action](/documentation/features-actions.html#id-of-an-action) that 
 has been [declared during setup](/documentation/configuration.html#setup).
 
-::: tip Laravel Debugbar
-If you have [Laravel Debugbar](https://github.com/barryvdh/laravel-debugbar) enabled, 
-you will see a tab called Authorisation that will output all of the different gates that are automatically made available by Lantern.
-:::
-
 So, for example, let's say you have an `Action` called `UpdateProject`.
 This will have an `id` of `update-project` which you can use with Laravel's built-in authorisation options.
+
 
 :::warning Dependencies
 Any dependencies declared in the `__construct()` method of your Actions must be passed through as
 additional parameters whenever authorising using Laravel's built-in methods described below.
+:::
+
+::: tip Laravel Debugbar
+If you have [Laravel Debugbar](https://github.com/barryvdh/laravel-debugbar) enabled,
+you will see a tab called Authorisation that will output all of the different gates that are automatically made available by Lantern.
 :::
 
 ## With middleware
@@ -72,15 +73,14 @@ Your Actions can be authorised using [Laravel's Blade directives](https://larave
 </ul>
 ```
 
-:::tip Multiple dependencies
 
-The 2nd argument of `can()` should be an `array` if you need to pass in multiple dependencies, e.g.:
+If you have multiple dependencies for your `Action`, the 2nd argument of `can()` should be an `array` if you need to pass in multiple dependencies, e.g.:
 
 ```perl
 @can('show-company-todo-list', [$company, $list])
 ```
 
-:::
+
 
 ## Further reading
 

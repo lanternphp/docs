@@ -1,70 +1,33 @@
-# Getting started
+# Introduction
 
-## Overview
+## What is Lantern?
 
-Lantern offers you, a Laravel developer, a framework for organising your domain model.
+Lantern is a deeply integrated extension to your Laravel application.
 
-By writing your domain model using a declarative coding convention, you will:
+Lantern offers a declarative coding convention for organising your domain model. It will allow you to more easily scan your code and understand your domain logic. It’s especially useful for large applications but will help in applications of any size.
 
-1. Be able to scan you code and see where your domain logic resides.
-1. Have more secure code.
-1. Get functionality for free, with deep integration into Laravel.
+## High-level overview
 
-You'll love returning to an app you haven't looked at for 3 months and seeing exactly what it does.
+The starting point of Lantern's implementation of Feature Driven Development is the declaration of the Domain Model through `Features` & `Actions`.
 
-## System requirements
+A `Feature` groups multiple, related Actions together. Features are the tree and branches, Actions are the leaves. Features can be optionally nested in other Features which can be useful for large codebases.
 
-- Laravel >= 5.5
-- PHP >= 7.0.0
+An `Action` is a single, isolated piece of functionality provided by your system. It can contain the logic regarding its availability, any constraints for its use and what is needed to prepare for and perform that action.
 
-## Installation
+System-level `Constraints` can be placed on a Feature or Action. Constraints are checked along with availability and it's a great way of switching off groups of actions or features depending on what the current system setup will support.
 
-### Install with composer
+`Availability` determines if an Action can be performed. It's built into the heart of Lantern and provides one of the biggest benefits. This could cover various things (we’ll get to some more later) but at its simplest, it could be used to make sure the user is able to perform the Action.
 
-Install from the command line:
+The `perform` method on an Action must return an `ActionResponse`, which is considered either successful or unsuccessful.
 
-``` bash
-composer require "lanternphp/lantern"
-```
+If you need to `prepare` some data for an end-user before performing an Action, Lantern provides a place to do that.
 
-**or by adding the following to your ==composer.json== file:**
+In addition, Lantern hooks straight into Laravel’s authorisation system. For example, each action automatically registers an Authorisation Gate so you can easily check what the current user is able to do. 
 
-```json
-{
-    "require": {
-        "lanternphp/lantern": "~1.0"
-    }
-}
-```
+Lantern projects follow these principles:
 
-And running:
+* Group the Actions of your web app into Features
+* For a large codebase, you might find it useful to optionally nest your Features in other Features
+* All external code used by an Action should be organised outside the Feature tree
+* All the above should be organised separately from your framework code, e.g. Service Providers, Controllers
 
-```bash
-php composer update lanternphp/lantern
-```
-
-
-#### Manual `Service Provider` registration
-
-::: warning OPTIONAL
-If you're running a recent version of Laravel, this is **not required**.
-If you're sprinkling a little Lantern on a legacy codebase, you may need to manually register
-Lantern's Service Provider.
-
-Beyond this, the Service Provider is [loaded automatically](https://laravel.com/docs/5.5/packages#package-discovery).
-:::
-
-You will need to manually register Lantern's `Service Provider` if:
-
-1. You're using ==Laravel 5.4== or earlier
-1. Or, you have decided to [opt-out of package discovery](https://laravel.com/docs/5.5/packages#package-discovery) 😭
-
-If either of these is the case for you, then you'll need to
-add the following to you ==config/app.php== file:
-
-```php
-'providers' => [
-    // …
-    Lantern\ServiceProvider::class,
-],
-```

@@ -4,11 +4,13 @@ module.exports = [
     collapsable: false,
     children: [
       '',
-      'features-actions',
-      'constraints-availability',
+      'installation',
+      'features',
+      'actions',
+      'availability',
+      'constraints',
       'authorisation',
-      'directory-structure',
-      'configuration',
+      'directory-structure'
     ]
   },
   /*{

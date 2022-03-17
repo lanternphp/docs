@@ -44,7 +44,7 @@ class AppFeatures extends Feature
 
 ```
 
-## `constraints`
+## Constraints
 
 If a Feature relies on a system-level dependency, then you can declare this as a `constraint`.
 

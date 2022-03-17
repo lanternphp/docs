@@ -19,4 +19,5 @@ Lantern takes this same high-level approach, and applies it to the world of web 
 ## Other credits
 
 - [x] Icons made by [Freepik](https://www.freepik.com/) from [Flaticon](https://www.flaticon.com/) & licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+- [x] These docs are built with [VuePress](https://vuepress.vuejs.org/)
 - [x] Styling of these docs inspired by [Lighthouse docs](https://lighthouse-php.com/)

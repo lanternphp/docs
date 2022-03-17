@@ -64,11 +64,11 @@ or ==features== depending on what the current system setup will support.
 
 [Learn more about constraints](/documentation/).
 
-### Availability and constraints by example
+## Availability and constraints by example
 
 Let's say your Gmail-like software has an ==action== allowing the user to `DownloadAllAttachments`.
 
 You might configure your `DownloadAllAttachments` ==action== like this:
 
 - ==availability== – only allow if the current message has 2 or more attachments (this is not a system constraint, since it changes based on the current message)
-- ==constraint== – only allow if the `zip` binary is present on the current system
+- ==constraint== – only allow if the `ZipArchive` class exists

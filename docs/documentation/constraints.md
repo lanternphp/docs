@@ -11,6 +11,43 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 }
 ```
 
+## Available constraints
+
+### `classExists()`
+
+Ensure a specific class exists. 
+
+_NB: This constraint will try to find the class with autoloading._
+
+<code-group>
+
+<code-block title="Usage">
+```php
+protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints)
+{
+    $constraints->classExists('ZipArchive');
+}
+```
+</code-block>
+
+<code-block title="Method signature">
+```php
+public function classExists($fullyQualifiedClassName): ConstraintsBuilder
+```
+
+</code-block>
+
+
+
+</code-group>
+
+:::tip Paths
+When Lantern searches for an executable, it must search certain paths on the server.
+
+These paths can be [configured in your AppServiceProvider](/documentation/configuration.html#pathdirs).
+:::
+
+
 ### `executableIsInstalled()`
 
 Ensure a specific binary is present on your system.

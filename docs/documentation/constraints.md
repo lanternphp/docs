@@ -32,7 +32,7 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 
 <code-block title="Method signature">
 ```php
-public function classExists($fullyQualifiedClassName): ConstraintsBuilder
+public function classExists(string $fullyQualifiedClassName): ConstraintsBuilder
 ```
 
 </code-block>
@@ -40,12 +40,6 @@ public function classExists($fullyQualifiedClassName): ConstraintsBuilder
 
 
 </code-group>
-
-:::tip Paths
-When Lantern searches for an executable, it must search certain paths on the server.
-
-These paths can be [configured in your AppServiceProvider](/documentation/configuration.html#pathdirs).
-:::
 
 
 ### `executableIsInstalled()`
@@ -65,7 +59,7 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 
 <code-block title="Method signature">
 ```php
-public function executableIsInstalled($executableName): ConstraintsBuilder
+public function executableIsInstalled(string $executableName): ConstraintsBuilder
 ```
 
 </code-block>
@@ -98,7 +92,7 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 
 <code-block title="Method signature">
 ```php
-public function extensionIsLoaded($extensionName): ConstraintsBuilder
+public function extensionIsLoaded(string $extensionName): ConstraintsBuilder
 ```
 
 </code-block>

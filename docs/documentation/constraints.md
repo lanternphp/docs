@@ -107,3 +107,10 @@ php -m
 ``` 
 :::
 
+## Constraint caching
+
+When a `Constraint` is checked, the result of that check is cached. This is to avoid needlessly running the same check
+over and over again.
+
+The whole point of a `Constraint` check is to ensure the `Action` is available within the current environment, and that
+environment is not expected to change within the same request.

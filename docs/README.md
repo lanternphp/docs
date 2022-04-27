@@ -5,7 +5,7 @@ metaTitle: Lantern
 actionText: Get started →
 actionLink: /documentation/
 tagline: A deeply integrated extension to your Laravel app
-footer: MIT Licensed | Copyright © 2020-present Bright Machine Ltd
+footer: MIT Licensed | Copyright © 2022-present Bright Machine Ltd
 ---
 
 ### Why Lantern?  

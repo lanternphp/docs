@@ -10,29 +10,12 @@ The `perform()` method of your Action should contain the main task of the action
 
 Any controller or artisan command can respond appropriately based on what is returned.
 
-<code-group>
-
-<code-block title="PHP 7 +">
 ```php
-public function perform(): \Lantern\Features\ActionResponse {
+public function perform(): \Lantern\Features\ActionResponse 
+{
    //…
 }
 ```
-</code-block>
-
-<code-block title="PHP 5">
-```php
-/**
- * @return \Lantern\Features\ActionResponse
- */
-public function perform() {
-   //…
-}
-```
-</code-block>
-
-
-</code-group>
 
 ### `prepare`
 
@@ -43,7 +26,8 @@ You don't necessarily want to have an Action just for this scenario (although yo
 `public function prepare()` method on your Action to handle this.
 
 ```php
-public function prepare(): array {
+public function prepare(): array 
+{
     //…
 }
 ```
@@ -61,7 +45,8 @@ This will be done, much like testing, by asserting the result of different opera
 Availability is `runtime`, and depends on the specific context of any given request.
 
 ```php
-protected function availability(Lantern\Features\AvailabilityBuilder $builder) {
+protected function availability(Lantern\Features\AvailabilityBuilder $builder) 
+{
     //…
 }
 ```
@@ -77,7 +62,8 @@ For an illustration of in what way you may want to use this see
 [Features - Constraints - An illustration](features.html#constraints)
 
 ```php
-protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints) {
+protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints) 
+{
      //…
 }
 ```
@@ -88,7 +74,7 @@ For info on the available methods of the `ConstraintsBuilder` see [Constraints](
 
 ### ID of an Action
 
-Each action has an `id`, which must be **unique across the entire application**.
+Each action has an `id`, which must be **unique across the `Feature` graph**.
 
 The `id` is used as a simple reference from across your Laravel application, e.g. when [authorising an Action](/documentation/authorisation.html).
 
@@ -98,7 +84,11 @@ becomes `clear-completed-todos`.
 The auto-generated `id` will probably be good enough for you. As long as you keep in mind that your class name must be
 unique across your application, then it'll probably be just fine.
 
-To override this default, simply declare a `const ID = ""` in your Action class.
+To override this default, simply declare a `const ID = ""` in your Action class:
+
+```php
+const ID = "my-new-action-name";
+```
 
 
 ### Passing data to your Action
@@ -111,7 +101,8 @@ Dependencies should be declared in the `__construct()` method of your Action.
 Input should be part of your `perform()` method, e.g.:
 
 ```php
-public function perform($todoText, $completed = false) {
+public function perform($todoText, $completed = false) 
+{
     //…
 }
 ```
@@ -149,4 +140,12 @@ The availability will be checked behind the scenes anyway, when you call `perfor
 If `perform()` is called without checking availability and fails the check, a `Lantern\LanternException` will be thrown.
 :::
 
+## Guest users
 
+By default, all Users are expected to be logged in to perform an `Action`.
+
+If your `Action` is to be accessible to Guest Users, then you must flag this on the `Action`.
+
+```php
+const GUEST_USERS = true;
+```

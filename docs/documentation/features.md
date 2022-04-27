@@ -11,6 +11,9 @@ class ExampleFeature extends Feature
 {
     // optionally override the ID automatically assigned
     const ID = null;
+    
+    // push your feature
+    const STACK = null;
 
     // An optional description of this feature
     const DESCRIPTION = '';
@@ -82,13 +85,29 @@ It's a totally different way of handling the same problem, which leaves you look
 If your Feature has Constraints to declare, then you must add the following to your class:
 
 ```php
-protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints) {
+protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints) 
+{
      //…
 }
 ```
 
 ::: warning More info
-Please note that constraints can also be called from your [`Actions`](/actions.html)
+Please note that constraints can also be declared in your [`Actions`](actions.html#constraints)
 
 For info on the available methods of the `ConstraintsBuilder` see [Constraints](constraints.html).
+:::
+
+## Multiple Feature graphs
+
+It's possible to work with multiple `Feature` graphs, thus giving you a way of splitting your `Actions` into groups.
+
+To do this, simply specify a `const STACK = 'my-stack';` onto your top-most Feature.
+
+This has two effects on your application:
+
+1. You can now have multiple `Actions` with the same `ID`, as long as they're in different stacks
+2. When checking authorisation, you must prefix the `Action` `ID` with the stack,<br>e.g. `@can('my-stack.add-todo') … @endcan'`
+
+::: danger Do not declare a STACK on a sub-feature
+If you specify an additional stack on a nested sub-feature, a `Lantern\LanternException` will be thrown.
 :::

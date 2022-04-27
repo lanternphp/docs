@@ -3,8 +3,8 @@
 Lantern hooks straight in to Laravel’s authorisation system.
 
 During the setup process, Lantern will register a [Laravel gate](https://laravel.com/docs/master/authorization#gates) 
-with the [id of each Action](/documentation/features-actions.html#id-of-an-action) that 
-has been [declared during setup](/documentation/configuration.html#setup).
+with the [id of each Action](/documentation/actions.html#id-of-an-action) that 
+has been [declared during set-up](/documentation/installation.html#set-up).
 
 So, for example, let's say you have an `Action` called `UpdateProject`.
 This will have an `id` of `update-project` which you can use with Laravel's built-in authorisation options.
@@ -80,7 +80,62 @@ If you have multiple dependencies for your `Action`, the 2nd argument of `can()`
 @can('show-company-todo-list', [$company, $list])
 ```
 
+## Feature stacks
 
+If you have provided a `Feature` stack name for your `Feature` graph, then that STACK name must be prefixed to the `Action` id
+when checking for authorisation. 
+
+For example:
+
+<code-group>
+
+<code-block title="Features ">
+```php
+
+class ProjectFeatures extends Lantern\Features\Feature
+{
+    const STACK = 'projects';
+
+    const ACTIONS = [
+        UpdateProject::class,
+    ];
+}
+
+```
+
+</code-block>
+
+<code-block title=" Action ">
+```php
+class UpdateProject extends Lantern\Features\Action
+{
+    public function __construct (Project $project) {
+        // …
+    }
+}
+```
+
+</code-block>
+
+<code-block title="Blade template">
+```html
+<h2>Projects</h2>
+
+<ul>
+@foreach($projects as $project)
+    <li>
+        {{ $project->name }}
+        @can('projects.update-project', [$project])
+        <a href="route('update-project', [$project])">Update</a>
+        @endcan
+    </li>
+@endforeach
+</ul>
+```
+
+</code-block>
+
+</code-group>
 
 ## Further reading
 

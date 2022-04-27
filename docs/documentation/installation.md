@@ -2,8 +2,8 @@
 
 ## System requirements
 
-- Laravel >= 5.5
-- PHP >= 7.0.0
+- Laravel >= 8
+- PHP >= 7.3
 
 ## Install with composer
 
@@ -29,28 +29,6 @@ And run:
 composer update lanternphp/lantern
 ```
 
-
-### Manual `Service Provider` registration
-
-::: warning OPTIONAL
-If you're running a recent version of Laravel, this is **not required**.
-If you're sprinkling a little Lantern on a legacy codebase, you may need to manually register
-Lantern's Service Provider.
-
-Beyond this, the Service Provider is [loaded automatically](https://laravel.com/docs/5.5/packages#package-discovery).
-:::
-
-If you have decided to [opt-out of package discovery](https://laravel.com/docs/5.5/packages#package-discovery) , you will need to manually register Lantern's `Service Provider` 
-via your ==config/app.php== file:
-
-```php
-'providers' => [
-    // …
-    Lantern\ServiceProvider::class,
-],
-```
-
-
 ## Set up
 
 The starting point is the base feature group that will declare all other features and actions.
@@ -72,9 +50,10 @@ class AppFeatures extends Feature
 }
 ```
 
-This top-level Feature group will need to be declared to Lantern, typically from `AppServiceProvider` within the `boot` method
+This top-level Feature group will need to be declared to Lantern from `AppServiceProvider` within the `boot` method.
 
-Lantern is configured by calling static methods on the `Lantern\Lantern` class. We use the `setup` method to declare the base feature group.
+Lantern is configured by calling static methods on the `Lantern\Lantern` class. We use the `setUp()` method to declare the 
+base feature group.
 
 ``` php
 <?php
@@ -93,14 +72,19 @@ class AppServiceProvider extends ServiceProvider
     
     protected function setupLantern()
     {
-        Lantern::setup(AppFeatures::class);
+        Lantern::setUp(AppFeatures::class);
     }
 }
 ```
 
 ## Directory path
 
-By default, when Lantern searches for a binary on the command line, it will use:
+By default, when Lantern searches for a binary on the command line, it will take either:
+
+1. Your [`open_basedir`](https://www.php.net/manual/en/ini.core.php#ini.open-basedir) path if set, otherwise
+2. The paths present in your `$PATH` environment variable
+
+… and combine these paths with:
 
 ``` php 
 [
@@ -111,7 +95,9 @@ By default, when Lantern searches for a binary on the command line, it will use:
 
 See the [Laravel documentation](https://laravel.com/docs/master/helpers#method-base-path) for more information on the `base_path()` method.
 
-If your system requires a binary outside of these directories, then you will need to provide this location to Lantern in order to use that binary as a `constraint`. You can do this via the `pathDirs` method, which you should call before the `setup` method in `AppServiceProvider`
+If your system requires a executable outside these directories, then you will need to provide this location to Lantern 
+in order to use that binary as a `constraint`. You can do this via the `pathDirs` method, which you should call 
+before the `setup` method in `AppServiceProvider`.
 
 ``` php 
 
@@ -136,7 +122,7 @@ class AppServiceProvider extends ServiceProvider
             '/var/www/bin',
         ]);
         
-        Lantern::setup(App\Features::class);
+        Lantern::setUp(App\Features::class);
     }
 }
 

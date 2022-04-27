@@ -23,6 +23,12 @@ so you can easily check what the current user is able to do. You can't do that w
 Beyond this, it's also likely you'll have your own Artisan commands, or you organise your controllers using [resource controllers](https://laravel.com/docs/master/controllers#resource-controllers)
 which do not reflect the entirety of your domain model.
 
+## Can package developers use Lantern?
+
+Yes, however please put your `Features` into a graph using your package name as the `STACK` to avoid collisions.
+
+For more information, read [the section on Multiple Feature graphs](/documentation/features.html#multiple-feature-graphs).  
+
 ## What's on the horizon for Lantern?
 
 We're always looking at ways of improving Lantern, and more deeply integrating with Laravel, so you get more 

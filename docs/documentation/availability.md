@@ -11,7 +11,7 @@ The Feature of an Action must have a signature that will allow it to be instanti
 being passed to its `__construct()` method.
 :::
 
-# AvailabilityBuilder
+## AvailabilityBuilder
 
 When you declare the availabilty of an `Action` you will use the `AvailabilityBuilder`
 
@@ -21,7 +21,14 @@ protected function availability(Lantern\Features\AvailabilityBuilder $builder) {
 }
 ```
 
-### Available methods
+## Available methods
+
+::: details Debugging availability
+
+It is often helpful in development to see why an `Action` is failing the availability checks.
+With all the `assert…` methods below, you have the option of providing a `$failureMessage`. This can be
+inspected when using the `gate` collector of the [Laravel Debugbar](https://github.com/barryvdh/laravel-debugbar).
+:::
 
 ### `user()`
 
@@ -141,7 +148,7 @@ protected function availability(AvailabilityBuilder $availabilityBuilder)
 
 <code-block title="Method signature">
 ```php
-public function assertTrue(bool $value)
+public function assertTrue(bool $value, $failureMessage = 'value passed to `assertTrue` is false')
 ```
 
 </code-block>
@@ -167,7 +174,7 @@ protected function availability(AvailabilityBuilder $availabilityBuilder)
 
 <code-block title="Method signature">
 ```php
-public function assertFalse(bool $value)
+public function assertFalse(bool $value, $failureMessage = 'value passed to `assertFalse` is true')
 ```
 
 </code-block>
@@ -181,6 +188,7 @@ Check if an expression is `null`.
 <code-group>
 
 <code-block title="Usage">
+
 ```php
 protected function availability(AvailabilityBuilder $availabilityBuilder)
 {
@@ -189,11 +197,100 @@ protected function availability(AvailabilityBuilder $availabilityBuilder)
     );
 }
 ```
+
 </code-block>
 
 <code-block title="Method signature">
+
 ```php
-public function assertNull($value)
+public function assertNull($value, $failureMessage = 'value passed to `assertNull` is not null')
+```
+
+</code-block>
+
+</code-group>
+
+### `assertNotNull()`
+
+Check if an expression is not `null`.
+
+<code-group>
+
+<code-block title="Usage">
+
+```php
+protected function availability(AvailabilityBuilder $availabilityBuilder)
+{
+    $availabilityBuilder->assertNotNull(
+        $availabilityBuilder->user->photo
+    );
+}
+```
+
+</code-block>
+
+<code-block title="Method signature">
+
+```php
+public function assertNotNull($value, $failureMessage = 'value passed to `assertNotNull` is null')
+```
+
+</code-block>
+
+</code-group>
+
+### `assertEmpty()`
+
+Check if an expression is empty.
+
+<code-group>
+
+<code-block title="Usage">
+
+```php
+protected function availability(AvailabilityBuilder $availabilityBuilder)
+{
+    $availabilityBuilder->assertEmpty(
+        $availabilityBuilder->user->settings
+    );
+}
+```
+
+</code-block>
+
+<code-block title="Method signature">
+
+```php
+public function assertEmpty($value, $failureMessage = 'value passed to `assertEmpty` is not empty')
+```
+
+</code-block>
+
+</code-group>
+
+### `assertNotEmpty()`
+
+Check if an expression is not empty.
+
+<code-group>
+
+<code-block title="Usage">
+
+```php
+protected function availability(AvailabilityBuilder $availabilityBuilder)
+{
+    $availabilityBuilder->assertNotEmpty(
+        $availabilityBuilder->user->settings
+    );
+}
+```
+
+</code-block>
+
+<code-block title="Method signature">
+
+```php
+public function assertNotEmpty($value, $failureMessage = 'value passed to `assertNotEmpty` is empty')
 ```
 
 </code-block>
@@ -207,6 +304,7 @@ Check if 2 expressions are `equal` in value (`==` not `===`).
 <code-group>
 
 <code-block title="Usage">
+
 ```php
 protected function availability(AvailabilityBuilder $availabilityBuilder)
 {
@@ -219,8 +317,39 @@ protected function availability(AvailabilityBuilder $availabilityBuilder)
 </code-block>
 
 <code-block title="Method signature">
+
 ```php
-public function assertEqual($expected, $other)
+public function assertEqual($expected, $other, $failureMessage = 'values passed to `assertEqual` are not equal')
+```
+
+</code-block>
+
+</code-group>
+
+### `assertNotEqual()`
+
+Check if 2 expressions are not `equal` in value (`==` not `===`).
+
+<code-group>
+
+<code-block title="Usage">
+
+```php
+protected function availability(AvailabilityBuilder $availabilityBuilder)
+{
+    $availabilityBuilder->assertNotEqual(
+        $availabilityBuilder->user()->id,
+        $this->company->owner_user_id
+    );
+}
+```
+
+</code-block>
+
+<code-block title="Method signature">
+
+```php
+public function assertNotEqual($expected, $other, $failureMessage = 'values passed to `assertNotEqual` are equal')
 ```
 
 </code-block>

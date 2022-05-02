@@ -12,7 +12,7 @@ class ExampleFeature extends Feature
     // optionally override the ID automatically assigned
     const ID = null;
     
-    // push your feature
+    // push your top-level feature onto a different stack
     const STACK = null;
 
     // An optional description of this feature

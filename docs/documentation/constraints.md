@@ -71,7 +71,7 @@ public function executableIsInstalled(string $executableName): ConstraintsBuilde
 :::tip Paths
 When Lantern searches for an executable, it must search certain paths on the server.
 
-These paths can be [configured in your AppServiceProvider](/documentation/configuration.html#pathdirs).
+These paths can be [configured in your AppServiceProvider](/documentation/installation.html#directory-path).
 :::
 
 

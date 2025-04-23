@@ -2,7 +2,7 @@
 
 A Feature must contain other Features and/or Actions and should extend `Lantern\Features\Feature`
 
-``` php 
+``` php
 <?php
 
 use Lantern\Features\Feature;
@@ -11,7 +11,7 @@ class ExampleFeature extends Feature
 {
     // optionally override the ID automatically assigned
     const ID = null;
-    
+
     // push your top-level feature onto a different stack
     const STACK = null;
 
@@ -21,18 +21,76 @@ class ExampleFeature extends Feature
     const ACTIONS = [
         // declare this features actions here
     ];
-    
+
     const FEATURES = [
-        // declare any features attached to this feature here 
+        // declare any features attached to this feature here
     ];
+}
+```
+
+**Example: Defining a Todos Feature**
+
+Let's create a Feature to group all Actions related to managing Todo items.
+
+```php
+<?php
+
+namespace App\Features\Todos; // Feature class namespace
+
+use App\Features\Todos\Actions\CreateTodoAction; // Action class
+use App\Features\Todos\Actions\UpdateTodoAction; // Action class
+use App\Features\Todos\Actions\DeleteTodoAction; // Action class
+use Lantern\Features\Feature;
+use Lantern\Features\AvailabilityBuilder; // For feature-level availability
+use Lantern\Features\ConstraintsBuilder; // For feature-level constraints
+use Illuminate\Support\Facades\Config;
+
+class TodosFeature extends Feature
+{
+    // Optional: A description for documentation or UI purposes
+    const DESCRIPTION = 'Manages all Todo list functionality.';
+
+    // List all Actions belonging directly to this Feature
+    const ACTIONS = [
+        CreateTodoAction::class,
+        UpdateTodoAction::class,
+        DeleteTodoAction::class,
+        // ... other todo-related actions
+    ];
+
+    // Optional: List any nested Sub-Features
+    const FEATURES = [
+        // NestedFeature::class,
+    ];
+
+    // Optional: Define availability checks for the entire Feature
+    // If these fail, ALL actions within this feature become unavailable.
+    protected function availability(AvailabilityBuilder $builder): void
+    {
+        // Example: Check if the todos module is enabled via config
+        $builder->assertTrue(
+            Config::get('modules.todos_enabled', false),
+            'The Todo module is currently disabled.'
+        );
+
+        // Example: Check if the user has a general permission to access todos
+        // $builder->userCan('access-todos', null, 'User lacks permission to access the Todo module.');
+    }
+
+    // Optional: Define constraints for the entire Feature
+    protected function constraints(ConstraintsBuilder $constraints): void
+    {
+        // Example: Check if the convert binary is present
+        $constraints->extensionIsLoaded('convert', 'The convert binary is required for Todos.');
+    }
 }
 ```
 
 Your Feature would then be declared in a parent Feature or in the base `AppFeatures` Feature (see [Setup](installation.html#set-up))
 
-``` php 
+``` php
 
-<?php 
+<?php
 
 use Lantern\Features\Feature;
 
@@ -52,7 +110,7 @@ class AppFeatures extends Feature
 If a Feature relies on a system-level dependency, then you can declare this as a `constraint`.
 
 If any declared constraints of a Feature fail to be met then all of its declared Actions will
-become unavailable. 
+become unavailable.
 
 ### An illustration
 Let us say that your app has a Feature that allows a profile picture to be uploaded and resized.
@@ -85,7 +143,7 @@ It's a totally different way of handling the same problem, which leaves you look
 If your Feature has Constraints to declare, then you must add the following to your class:
 
 ```php
-protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints) 
+protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints)
 {
      //…
 }

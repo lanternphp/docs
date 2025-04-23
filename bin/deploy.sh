@@ -10,7 +10,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 rm -rf .vuepress
 
 # build
-yarn build
+npm run build
 
 # navigate into the build output directory
 cd .vuepress/

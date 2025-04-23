@@ -35,24 +35,31 @@ The starting point is the base feature group that will declare all other feature
 
 It can be named anything you want, but we'll call this `AppFeatures` (in ==src/AppFeatures.php==).
 
+**Note on Location:** While you can place this file anywhere PSR-4 autoloading can find it, a common convention is to place it within your `app` directory, for example, at `app/Features/AppFeatures.php`. See the [Directory Structure](/documentation/directory-structure.html) documentation for more details on organizing your Features and Actions.
+
 ``` php
-<?php 
+<?php
+// Example path: app/Features/AppFeatures.php
+
+namespace App\Features; // Adjust namespace if needed
 
 use Lantern\Features\Feature;
 
 class AppFeatures extends Feature
 {
-    const DESCRIPTION = 'Top-level feature';
+    const DESCRIPTION = 'Top-level application feature registry';
 
+    // Register your application's main features here, e.g.:
     const FEATURES = [
-        /* features will go in here */
+        \App\Features\Todos\TodosFeature::class,
+        \App\Features\Projects\ProjectsFeature::class,
     ];
 }
 ```
 
 This top-level Feature group will need to be declared to Lantern from `AppServiceProvider` within the `boot` method.
 
-Lantern is configured by calling static methods on the `Lantern\Lantern` class. We use the `setUp()` method to declare the 
+Lantern is configured by calling static methods on the `Lantern\Lantern` class. We use the `setUp()` method to declare the
 base feature group.
 
 ``` php
@@ -69,7 +76,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->setupLantern();
     }
-    
+
     protected function setupLantern()
     {
         Lantern::setUp(AppFeatures::class);
@@ -86,20 +93,20 @@ By default, when Lantern searches for a binary on the command line, it will take
 
 … and combine these paths with:
 
-``` php 
+``` php
 [
     base_path(), // the folder into which Laravel is installed
-    base_path('vendor/bin'), // where composer's binaries are stored 
+    base_path('vendor/bin'), // where composer's binaries are stored
 ]
 ```
 
 See the [Laravel documentation](https://laravel.com/docs/master/helpers#method-base-path) for more information on the `base_path()` method.
 
-If your system requires a executable outside these directories, then you will need to provide this location to Lantern 
-in order to use that binary as a `constraint`. You can do this via the `pathDirs` method, which you should call 
+If your system requires a executable outside these directories, then you will need to provide this location to Lantern
+in order to use that binary as a `constraint`. You can do this via the `pathDirs` method, which you should call
 before the `setup` method in `AppServiceProvider`.
 
-``` php 
+``` php
 
 <?php
 
@@ -114,14 +121,14 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->setupLantern();
     }
-    
+
     protected function setupLantern()
     {
         Lantern::pathDirs([
             '/usr/local/bin/',
             '/var/www/bin',
         ]);
-        
+
         Lantern::setUp(App\Features::class);
     }
 }

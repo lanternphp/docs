@@ -4,16 +4,101 @@
 
 Each Action class should extend `Lantern\Features\Action` and there are several methods available.
 
+**Example: Creating a Todo Item**
+
+Let's illustrate with an example Action that creates a new todo item.
+
+```php
+<?php
+
+namespace App\Features\Todos\Actions;
+
+use App\Models\Todo;
+use App\Services\TodoRepository;
+use Illuminate\Support\Facades\Auth;
+use Lantern\Features\Action;
+use Lantern\Features\ActionResponse;
+use Lantern\Features\AvailabilityBuilder;
+
+class CreateTodoAction extends Action
+{
+    // Define a unique ID (optional, defaults to 'create-todo-action')
+    const ID = 'todos:create';
+
+    // Inject dependencies via the constructor
+    public function __construct(private TodoRepository $todoRepository)
+    {
+    }
+
+    // Define the main logic in the perform method
+    public function perform(string $taskDescription): ActionResponse
+    {
+        // Example: Basic validation or authorization
+        if (empty($taskDescription)) {
+            return $this->failure('Task description cannot be empty.');
+        }
+
+        // Perform the core action
+        $todo = $this->todoRepository->create([
+            'user_id' => Auth::id(),
+            'description' => $taskDescription,
+            'completed' => false,
+        ]);
+
+        if ($todo) {
+            return $this->success('Todo created successfully.', ['todo_id' => $todo->id]);
+        } else {
+            return $this->failure('Failed to create todo.');
+        }
+    }
+
+    // Optional: Define availability checks
+    protected function availability(AvailabilityBuilder $builder): void
+    {
+        // Example: Ensure the user is logged in (though Actions require login by default)
+        $builder->mustBeAuthenticated();
+
+        // Example: Check if the user has a specific permission (requires custom logic)
+        // $builder->assert('user_can_create_todos', fn() => Auth::user()->can('create', Todo::class));
+    }
+
+    // Optional: Define data preparation logic
+    public function prepare(): array
+    {
+        // Example: Return data needed for a form (e.g., categories)
+        return [
+            'available_categories' => ['Work', 'Personal', 'Urgent'],
+        ];
+    }
+}
+```
+
+This example shows:
+- Extending `Lantern\Features\Action`.
+- Injecting a `TodoRepository` dependency.
+- Defining the `perform` method with input (`$taskDescription`) and returning an `ActionResponse`.
+- Optionally defining `availability` checks using `AvailabilityBuilder`.
+- Optionally defining a `prepare` method to return data.
+- Setting a custom `ID`.
+
 ### `perform`
 
 The `perform()` method of your Action should contain the main task of the action and must return an ActionResponse, which is considered either `successful` or `unsuccessful`.
 
+You should use the `$this->success()` and `$this->failure()` methods to return responses from your action. Both methods accept a message and optional data array.
+
 Any controller or artisan command can respond appropriately based on what is returned.
 
 ```php
-public function perform(): \Lantern\Features\ActionResponse 
+public function perform(/* ... parameters ... */): \Lantern\Features\ActionResponse
 {
-   //…
+   // Your core logic here...
+
+   // Return success with message and optional data
+   return $this->success('Operation completed successfully', ['key' => 'value']);
+
+   // Or return failure with message
+   return $this->failure('Operation failed: reason');
 }
 ```
 
@@ -26,7 +111,7 @@ You don't necessarily want to have an Action just for this scenario (although yo
 `public function prepare()` method on your Action to handle this.
 
 ```php
-public function prepare(): array 
+public function prepare(): array
 {
     //…
 }
@@ -45,7 +130,7 @@ This will be done, much like testing, by asserting the result of different opera
 Availability is `runtime`, and depends on the specific context of any given request.
 
 ```php
-protected function availability(Lantern\Features\AvailabilityBuilder $builder) 
+protected function availability(Lantern\Features\AvailabilityBuilder $builder)
 {
     //…
 }
@@ -55,14 +140,14 @@ For information on checking against availability in your code and the available 
 
 ### `constraints`
 
-If an Action relies on a system-level dependency, then you can declare this as a Constraint. 
+If an Action relies on a system-level dependency, then you can declare this as a Constraint.
 The `constraints` method can be called from either a `Feature` or `Action`
 
 For an illustration of in what way you may want to use this see
 [Features - Constraints - An illustration](features.html#constraints)
 
 ```php
-protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints) 
+protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints)
 {
      //…
 }
@@ -101,7 +186,7 @@ Dependencies should be declared in the `__construct()` method of your Action.
 Input should be part of your `perform()` method, e.g.:
 
 ```php
-public function perform($todoText, $completed = false) 
+public function perform($todoText, $completed = false)
 {
     //…
 }

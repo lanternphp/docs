@@ -15,6 +15,9 @@
       <PhpCSConfiguration tool_path="$USER_HOME$/.composer/vendor/bin/phpcs" timeout="15000" />
     </phpcs_settings>
   </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
+    <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
   </component>

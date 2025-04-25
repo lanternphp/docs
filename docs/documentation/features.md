@@ -63,25 +63,22 @@ class TodosFeature extends Feature
         // NestedFeature::class,
     ];
 
-    // Optional: Define availability checks for the entire Feature
-    // If these fail, ALL actions within this feature become unavailable.
-    protected function availability(AvailabilityBuilder $builder): void
-    {
-        // Example: Check if the todos module is enabled via config
-        $builder->assertTrue(
-            Config::get('modules.todos_enabled', false),
-            'The Todo module is currently disabled.'
-        );
+    // Note: Features do not support availability checks.
+    // Only constraints are checked when determining if an Action is available.
+    // If you need common availability logic, consider creating a base Action class
+    // that your Actions can extend.
 
-        // Example: Check if the user has a general permission to access todos
-        // $builder->userCan('access-todos', null, 'User lacks permission to access the Todo module.');
-    }
-
-    // Optional: Define constraints for the entire Feature
-    protected function constraints(ConstraintsBuilder $constraints): void
+    // Define constraints for the entire Feature
+    // These constraints are checked when determining if Actions within this Feature are available
+    protected function constraints(ConstraintsBuilder $constraints)
     {
         // Example: Check if the convert binary is present
-        $constraints->extensionIsLoaded('convert', 'The convert binary is required for Todos.');
+        // Note: The actual implementation doesn't accept error messages
+        $constraints->extensionIsLoaded('convert');
+
+        // Other examples:
+        // $constraints->classExists('ZipArchive');
+        // $constraints->executableIsInstalled('pdftk');
     }
 }
 ```

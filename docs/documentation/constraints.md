@@ -1,5 +1,9 @@
 # Constraints
 
+Constraints are system-level dependencies that must be met for a Feature or Action to be available. When Lantern checks an Action's availability, it also checks the constraints of its parent Feature.
+
+**Important:** Feature constraints are the only aspect of a Feature that affects the availability of its Actions. If a Feature's constraints fail, all Actions within that Feature will be unavailable.
+
 For more information on Constraints see [Features - Constraints](/documentation/features.html#constraints) and [Actions - Constraints](/documentation/actions.html#constraints)
 
 If your Feature or Action has Constraints to declare, then you must add the following to your class:
@@ -30,25 +34,17 @@ class GeneratePdfReportAction extends Action
     // Action methods like __construct, perform, etc.
     // ...
 
-    protected function constraints(ConstraintsBuilder $constraints): void
+    protected function constraints(ConstraintsBuilder $constraints)
     {
         // 1. Ensure the PDF generation service class exists
-        $constraints->classExists(
-            PdfGeneratorService::class,
-            'The required PdfGeneratorService class is missing.'
-        );
+        // Note: The actual implementation doesn't accept error messages
+        $constraints->classExists(PdfGeneratorService::class);
 
         // 2. Ensure the 'imagick' PHP extension is loaded (if needed for PDF generation)
-        $constraints->extensionIsLoaded(
-            'imagick',
-            'The Imagick PHP extension is required for report generation.'
-        );
+        $constraints->extensionIsLoaded('imagick');
 
         // 3. Ensure the 'pdftk' executable is installed (if needed for advanced PDF manipulation)
-        $constraints->executableIsInstalled(
-            'pdftk',
-            'The pdftk executable needs to be installed on the server.'
-        );
+        $constraints->executableIsInstalled('pdftk');
     }
 
     public function perform(): ActionResponse
@@ -62,11 +58,15 @@ class GeneratePdfReportAction extends Action
 
 **Explanation:**
 
-1.  `classExists(PdfGeneratorService::class, ...)`: Checks if the `App\Services\PdfGeneratorService` class can be found and autoloaded. If not, the action/feature will be considered unavailable, and the provided message can help diagnose the issue.
-2.  `extensionIsLoaded('imagick', ...)`: Verifies that the `imagick` PHP extension is installed and enabled in the current PHP environment.
-3.  `executableIsInstalled('pdftk', ...)`: Checks if the `pdftk` command-line tool is present in the system paths configured for Lantern (see [Installation](/documentation/installation.html#directory-path)).
+1.  `classExists(PdfGeneratorService::class)`: Checks if the `App\Services\PdfGeneratorService` class can be found and autoloaded. If not, the action/feature will be considered unavailable.
+2.  `extensionIsLoaded('imagick')`: Verifies that the `imagick` PHP extension is installed and enabled in the current PHP environment.
+3.  `executableIsInstalled('pdftk')`: Checks if the `pdftk` command-line tool is present in the system paths configured for Lantern (see [Installation](/documentation/installation.html#directory-path)).
+
+**Important Note:** The actual implementation of these constraint methods in the `ConstraintsBuilder` class does not accept error messages as parameters. The methods only accept the name of the class, extension, or executable to check. Error messages shown in some examples are not supported by the core implementation.
 
 If any of these constraints fail, the `GeneratePdfReportAction` will not be considered available, and attempting to call `perform()` on it (via the proxy) will result in an exception *before* the `perform` method's code is even executed.
+
+Similarly, if these constraints were defined on a Feature, all Actions within that Feature would be unavailable if any constraint fails.
 
 ## Available constraints
 
@@ -89,7 +89,8 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 
 <code-block title="Method signature">
 ```php
-public function classExists(string $fullyQualifiedClassName): ConstraintsBuilder
+// Actual implementation in ConstraintsBuilder.php
+public function classExists($fullyQualifiedClassName): self
 ```
 
 </code-block>
@@ -116,7 +117,8 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 
 <code-block title="Method signature">
 ```php
-public function executableIsInstalled(string $executableName): ConstraintsBuilder
+// Actual implementation in ConstraintsBuilder.php
+public function executableIsInstalled($executableName): self
 ```
 
 </code-block>
@@ -149,7 +151,8 @@ protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints
 
 <code-block title="Method signature">
 ```php
-public function extensionIsLoaded(string $extensionName): ConstraintsBuilder
+// Actual implementation in ConstraintsBuilder.php
+public function extensionIsLoaded($extensionName): self
 ```
 
 </code-block>

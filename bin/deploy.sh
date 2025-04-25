@@ -15,7 +15,7 @@ npm run build
 # navigate into the build output directory
 cd .vuepress/
 
-git init
+git init -b master
 git add -A
 git commit -m 'rebuild docs from https://github.com/lanternphp/docs'
 

@@ -1,19 +1,17 @@
 # Availability
 
-We can declare whether an Action or its associated Feature is available through the use of the `availability` method
+We can declare whether an Action is available through the use of the `availability` method.
 
-When Lantern checks an Action's availability, it also checks the availability of its direct parent Feature.
-
-This allows multiple `Actions` to inherit availability but introduces an important restriction:
+When Lantern checks an Action's availability, it also checks the **constraints** of its parent Feature, but not the Feature's availability.
 
 :::warning Inheritance
 The Feature of an Action must have a signature that will allow it to be instantiated without arguments
-being passed to its `__construct()` method.
+being passed to its `__construct()` method, as Lantern needs to instantiate the Feature to check its constraints.
 :::
 
 ## AvailabilityBuilder
 
-When you declare the availabilty of an `Action` you will use the `AvailabilityBuilder`
+When you declare the availability of an `Action` you will use the `AvailabilityBuilder`
 
 ```php
 protected function availability(Lantern\Features\AvailabilityBuilder $builder) {
@@ -51,10 +49,12 @@ class UpdateTodoAction extends Action
         return ActionResponse::successful('Todo updated.');
     }
 
-    protected function availability(AvailabilityBuilder $builder): void
+    protected function availability(AvailabilityBuilder $builder)
     {
         // 1. Ensure the user is authenticated (redundant if GUEST_USERS is false, but good practice)
-        $builder->mustBeAuthenticated('User must be logged in to update todos.');
+        // Note: mustBeAuthenticated() is not in the core AvailabilityBuilder
+        // Instead, use the built-in methods:
+        $builder->assertTrue(auth()->check(), 'User must be logged in to update todos.');
 
         // 2. Use Laravel Policy: Check if the user 'can' update the specific $todo model
         $builder->userCan('update', $this->todo, 'User does not have permission to update this specific todo.');
@@ -66,19 +66,20 @@ class UpdateTodoAction extends Action
         $builder->assertEqual($builder->user()->id, $this->todo->user_id, 'User must own the todo to update it.');
 
         // 5. Check Parent Feature: Ensure the parent 'TodosFeature' is available
-        // Assuming TodosFeature exists and might have its own availability checks (e.g., subscription status)
-        // $builder->featureAvailable(TodosFeature::class, 'Todo management is currently disabled.');
+        // Note: featureAvailable() is not in the core AvailabilityBuilder
+        // You would need to extend AvailabilityBuilder to add this method
     }
 }
 ```
 
 **Explanation of Examples:**
 
-1.  `mustBeAuthenticated()`: A built-in check ensuring a user is logged in. The string is the optional failure message.
+1.  `assertTrue(auth()->check(), ...)`: A generic assertion checking if the user is authenticated. This is a standard way to check authentication status.
 2.  `userCan('update', $this->todo)`: Leverages Laravel's authorization. It checks if the `$builder->user()` (the current user by default) has the `update` ability for the provided `$this->todo` model instance, according to your `TodoPolicy`.
 3.  `assertFalse($this->todo->is_completed)`: A generic assertion checking if the `is_completed` property of the todo is `false`.
 4.  `assertEqual($builder->user()->id, $this->todo->user_id)`: Compares the current user's ID with the todo's `user_id`.
-5.  `featureAvailable(TodosFeature::class)`: Checks if the specified parent Feature class passes its *own* availability checks. (This method might require adding it to your custom extended `AvailabilityBuilder` if not present in the base class, or it might be available in newer versions).
+
+**Note:** The core `AvailabilityBuilder` class doesn't include methods like `mustBeAuthenticated()` or `featureAvailable()`. If you need such functionality, you can extend the `AvailabilityBuilder` class with your own custom methods. See the section on [Customising availability checks](#customising-availability-checks) below.
 
 :::tip Debugging availability
 It is often helpful in development to see why an `Action` is failing the availability checks. With all the `assert…` methods below, you have the option of providing a `$failureMessage`. This can be inspected when using the `gate` collector of the [Laravel Debugbar](https://github.com/barryvdh/laravel-debugbar).

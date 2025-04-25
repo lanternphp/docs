@@ -46,29 +46,31 @@ class CreateTodoAction extends Action
         ]);
 
         if ($todo) {
-            return $this->success('Todo created successfully.', ['todo_id' => $todo->id]);
+            // Note: success() only accepts data, not a message
+            return $this->success(['message' => 'Todo created successfully.', 'todo_id' => $todo->id]);
         } else {
+            // Note: failure() accepts errors and optional data
             return $this->failure('Failed to create todo.');
         }
     }
 
     // Optional: Define availability checks
-    protected function availability(AvailabilityBuilder $builder): void
+    protected function availability(AvailabilityBuilder $builder)
     {
-        // Example: Ensure the user is logged in (though Actions require login by default)
-        $builder->mustBeAuthenticated();
-
-        // Example: Check if the user has a specific permission (requires custom logic)
-        // $builder->assert('user_can_create_todos', fn() => Auth::user()->can('create', Todo::class));
+        // Always use the user from the builder since this may not be the logged in user
+        // for example, in an admin panel listing users
+        $user = $builder->user();
+        
+        $builder->assertTrue($user->hasActiveSubscription(), 'User must have an active subscription to create todos.');
     }
 
     // Optional: Define data preparation logic
-    public function prepare(): array
+    public function prepare(): ActionResponse
     {
         // Example: Return data needed for a form (e.g., categories)
-        return [
+        return $this->success([
             'available_categories' => ['Work', 'Personal', 'Urgent'],
-        ];
+        ]);
     }
 }
 ```
@@ -85,7 +87,10 @@ This example shows:
 
 The `perform()` method of your Action should contain the main task of the action and must return an ActionResponse, which is considered either `successful` or `unsuccessful`.
 
-You should use the `$this->success()` and `$this->failure()` methods to return responses from your action. Both methods accept a message and optional data array.
+You should use the `$this->success()` and `$this->failure()` methods to return responses from your action:
+
+- `$this->success($data = null)`: Returns a successful response with optional data
+- `$this->failure($errors = null, array $data = [])`: Returns a failure response with optional errors and data
 
 Any controller or artisan command can respond appropriately based on what is returned.
 
@@ -94,32 +99,43 @@ public function perform(/* ... parameters ... */): \Lantern\Features\ActionRespo
 {
    // Your core logic here...
 
-   // Return success with message and optional data
-   return $this->success('Operation completed successfully', ['key' => 'value']);
+   // Return success with data
+   return $this->success(['message' => 'Operation completed successfully', 'key' => 'value']);
 
-   // Or return failure with message
+   // Or return failure with errors
    return $this->failure('Operation failed: reason');
+
+   // Or return failure with errors and data
+   return $this->failure('Operation failed: reason', ['additional' => 'context']);
 }
 ```
 
 ### `prepare`
 
-Often, you will want to show some data to an end-user before performing an Action. Typically, when displaying data being
-acted, e.g. in a form or for confirmation.
+Often, you will want to show some data to an end-user before performing an Action. 
+Typically, when displaying data being acted upon, e.g. in a form or for confirmation.
 
 You don't necessarily want to have an Action just for this scenario (although you may), so you can define a
 `public function prepare()` method on your Action to handle this.
 
 ```php
-public function prepare(): array
+public function prepare(): ActionResponse
 {
-    //…
+    // Prepare data for a form or confirmation
+    $data = [
+        'options' => ['Option 1', 'Option 2'],
+        'defaults' => ['selected' => 'Option 1']
+    ];
+
+    return $this->success($data);
 }
 ```
 
+Like `perform()`, the `prepare()` method should return an `ActionResponse` using the `$this->success()` or `$this->failure()` methods.
+
 ### `availability`
 
-By default, each Action and Feature is available. With Availability, you declare a set of checks that must be passed before an Action is deemed available.
+By default, each Action is available. With Availability, you declare a set of checks that must be passed before an Action is deemed available.
 
 E.g. you might want to check:
 - current user has a specific privilege
@@ -132,9 +148,20 @@ Availability is `runtime`, and depends on the specific context of any given requ
 ```php
 protected function availability(Lantern\Features\AvailabilityBuilder $builder)
 {
-    //…
+    // Check if the user has permission to perform this action
+    $builder->userCan('create', Todo::class);
+
+    // Assert that a condition is true
+    $builder->assertTrue($someCondition, 'Custom error message');
+
+    // Check if values are equal
+    $builder->assertEqual($builder->user()->id, $this->todo->user_id, 'User must own the todo');
 }
 ```
+
+Note that the `availability` method does not have a return type in the actual implementation, though you may add `: void` in your own code for clarity.
+
+**Important:** When Lantern checks an Action's availability, it also checks the **constraints** of its parent Feature, but not the Feature's availability. This means that if a Feature's constraints fail, all Actions within that Feature will be unavailable.
 
 For information on checking against availability in your code and the available methods within the  `AvailabilityBuilder` see [Availability.](availability.html)
 
@@ -149,11 +176,20 @@ For an illustration of in what way you may want to use this see
 ```php
 protected function constraints(\Lantern\Features\ConstraintsBuilder $constraints)
 {
-     //…
+    // Check if a class exists
+    $constraints->classExists('ZipArchive');
+
+    // Check if a PHP extension is loaded
+    $constraints->extensionIsLoaded('imagick');
+
+    // Check if an executable is installed
+    $constraints->executableIsInstalled('convert');
 }
 ```
 
-Please note that constraints can also be called from your [`Features`](/features.html)
+Note that the constraint methods in the actual implementation do not accept error messages as parameters, unlike what some examples might suggest. The constraint system is designed to check system-level dependencies, not to provide user-facing error messages.
+
+Please note that constraints can also be declared on your [`Features`](/documentation/features.html)
 
 For info on the available methods of the `ConstraintsBuilder` see [Constraints](constraints.html).
 
@@ -202,7 +238,17 @@ MyAction::make(...dependencies)->perform(...methodParameters);
 
 `make()` will instantiate your action using the arguments passed in, but return an instance of `\Lantern\Features\ActionProxy`.
 
-The ActionProxy ensures that the Action is [available](/documentation/actions.html#availability) to be performed within the current context.
+### Understanding ActionProxy
+
+The `ActionProxy` is a wrapper around your Action that provides several important functions:
+
+1. It ensures that the Action is [available](/documentation/actions.html#availability) to be performed within the current context
+2. It integrates with Laravel's Gate system for authorization
+3. It handles checking constraints before allowing the action to be performed
+
+When you call `perform()` or `prepare()` on an ActionProxy, it first checks if the action is available. If not, it throws a `LanternException`.
+
+### Using prepare()
 
 Use the same approach to call `prepare()` where needed:
 
@@ -210,12 +256,38 @@ Use the same approach to call `prepare()` where needed:
 MyAction::make(...dependencies)->prepare();
 ```
 
+### Checking Availability
 
-You can check availability using the `ActionProxy`, for example:
+You can explicitly check availability using the `available()` method on the `ActionProxy`:
 
 ```php
 if ($action = MyAction::make()->available()) {
+    // Action is available, so perform it
     $action->perform();
+} else {
+    // Action is not available
+    // You can handle this case gracefully
+}
+```
+
+The `available()` method returns the ActionProxy itself if the action is available, or `false` if it's not available.
+
+### Working with ActionResponse
+
+When you call `perform()` or `prepare()`, you get back an `ActionResponse` object. Here's how to work with it:
+
+```php
+$response = MyAction::make()->perform();
+
+if ($response->successful()) {
+    // Access data from the response
+    $data = $response->data();
+
+    // Or access a specific key using dot notation
+    $specificValue = $response->data('some.nested.key');
+} else {
+    // Handle failure
+    $errors = $response->errors();
 }
 ```
 

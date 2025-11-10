@@ -22,7 +22,7 @@ Let's say you have an Action that generates PDF reports using a specific library
 ```php
 <?php
 
-namespace App\Features\Reports\Actions;
+namespace App\Features\Reports;
 
 use App\Services\PdfGeneratorService; // Assumed dependency
 use Lantern\Features\Action;

@@ -33,7 +33,7 @@ composer update lanternphp/lantern
 
 The starting point is the base feature group that will declare all other features and actions.
 
-It can be named anything you want, but we'll call this `AppFeatures` (in ==src/AppFeatures.php==).
+It can be named anything you want, but we'll call this `AppFeatures` (in ==app/Features/AppFeatures.php==).
 
 **Note on Location:** While you can place this file anywhere PSR-4 autoloading can find it, a common convention is to place it within your `app` directory, for example, at `app/Features/AppFeatures.php`. See the [Directory Structure](/documentation/directory-structure.html) documentation for more details on organizing your Features and Actions.
 

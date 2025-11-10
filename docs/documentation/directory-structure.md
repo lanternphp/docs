@@ -10,10 +10,9 @@ not be for everyone.
 
 ```
 .
-├── src/
-│   ├── AppFeatures.php (The starting point for all your features)
-│   │
+├── app/
 │   ├── Features/
+│   │   ├── AppFeatures.php (The starting point for all your features)
 │   │   ├── ManagingUsers/
 │   │   ├── TodoList/ 🔻 (All the actions within the feature)
 │   │   │   ├── ListTodos.php
@@ -36,9 +35,9 @@ not be for everyone.
 
 ## Namespacing your project
 
-Add a namespace to your `src/` directory, named after your application.
+Use the standard Laravel `App\` namespace for your features.
 
-In your `composer.json` file:
+In your `composer.json` file, the default Laravel autoloading configuration already includes:
 
 ```json
 {
@@ -46,9 +45,7 @@ In your `composer.json` file:
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/",
-
-            "MyTodos\\": "src/"
+            "Database\\Seeders\\": "database/seeders/"
         }
     }
 }

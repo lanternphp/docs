@@ -37,9 +37,9 @@ Let's create a Feature to group all Actions related to managing Todo items.
 
 namespace App\Features\Todos; // Feature class namespace
 
-use App\Features\Todos\Actions\CreateTodoAction; // Action class
-use App\Features\Todos\Actions\UpdateTodoAction; // Action class
-use App\Features\Todos\Actions\DeleteTodoAction; // Action class
+use App\Features\Todos\CreateTodoAction; // Action class
+use App\Features\Todos\UpdateTodoAction; // Action class
+use App\Features\Todos\DeleteTodoAction; // Action class
 use Lantern\Features\Feature;
 use Lantern\Features\AvailabilityBuilder; // For feature-level availability
 use Lantern\Features\ConstraintsBuilder; // For feature-level constraints

@@ -16,7 +16,7 @@ An `Action` is a single, isolated piece of functionality provided by your system
 
 System-level `Constraints` can be placed on a Feature or Action. Constraints are checked along with availability and it's a great way of switching off groups of actions or features depending on what the current system setup will support.
 
-`Availability` determines if an Action can be performed. It's built into the heart of Lantern and provides one of the biggest benefits. This could cover various things (we’ll get to some more later) but at its simplest, it could be used to make sure the user is able to perform the Action.
+`Availability` determines if an Action can be performed. It's built into the heart of Lantern and provides one of the biggest benefits, colocating the logic around authorisation right there with the domain logic. For example, whether the given user has permission and/or if the state of the dependency allows for the `Action` to be performed.
 
 The `perform` method on an Action must return an `ActionResponse`, which is considered either successful or unsuccessful.
 

@@ -11,11 +11,10 @@ Let's illustrate with an example Action that creates a new todo item.
 ```php
 <?php
 
-namespace App\Features\Todos\Actions;
+namespace App\Features\Todos;
 
 use App\Models\Todo;
 use App\Services\TodoRepository;
-use Illuminate\Support\Facades\Auth;
 use Lantern\Features\Action;
 use Lantern\Features\ActionResponse;
 use Lantern\Features\AvailabilityBuilder;

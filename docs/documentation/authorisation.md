@@ -2,8 +2,8 @@
 
 Lantern hooks straight in to Laravel’s authorisation system.
 
-During the setup process, Lantern will register a [Laravel gate](https://laravel.com/docs/master/authorization#gates) 
-with the [id of each Action](/documentation/actions.html#id-of-an-action) that 
+During the setup process, Lantern will register a [Laravel gate](https://laravel.com/docs/master/authorization#gates)
+with the [id of each Action](/documentation/actions.html#id-of-an-action) that
 has been [declared during set-up](/documentation/installation.html#set-up).
 
 So, for example, let's say you have an `Action` called `UpdateProject`.
@@ -24,7 +24,7 @@ you will see a tab called Authorisation that will output all of the different ga
 
 Your Actions can be authorised using [Laravel's middleware authorisation](https://laravel.com/docs/master/authorization#via-middleware).
 
-Any dependencies that are needed for your Action, will need to come through 
+Any dependencies that are needed for your Action, will need to come through
 [Laravel's Route Model Binding](https://laravel.com/docs/master/routing#route-model-binding).
 
 <code-group>
@@ -33,7 +33,7 @@ Any dependencies that are needed for your Action, will need to come through
 ```php
 // in your route file
 
-Route::get('/{todolist}', function (\MyTodos\Services\Models\TodoList $todolist) {
+Route::get('/{todolist}', function (\App\Models\TodoList $todolist) {
     return $todolist;
 })->middleware('can:show-todo-list,todolist')->name('show-todo-list');
 ```
@@ -44,7 +44,7 @@ Route::get('/{todolist}', function (\MyTodos\Services\Models\TodoList $todolist)
 ```php
 // in your RouteServiceProvider class
 public function boot() {
-    Route::model('todolist', \MyTodos\Services\Models\TodoList::class);
+    Route::model('todolist', \App\Models\TodoList::class);
 }
 
 // in your route file
@@ -67,7 +67,7 @@ Your Actions can be authorised using [Laravel's Blade directives](https://larave
         <li>
             <a href="{{ route('show-todo-list', ['todolist' => $list]) }}">
                 {{ $list->name }}</a>
-        </li>    
+        </li>
     @endcan
 @endforeach
 </ul>
@@ -83,7 +83,7 @@ If you have multiple dependencies for your `Action`, the 2nd argument of `can()`
 ## Feature stacks
 
 If you have provided a `Feature` stack name for your `Feature` graph, then that STACK name must be prefixed to the `Action` id
-when checking for authorisation. 
+when checking for authorisation.
 
 For example:
 

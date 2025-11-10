@@ -4,10 +4,10 @@
 
 If we were building to-do list functionality we would group all the features together in a `TodoListFeature`
 
-``` php 
+``` php
 <?php
 
-namespace MyTodos\Features;
+namespace App\Features;
 
 use Lantern\Features\Feature;
 
@@ -29,11 +29,11 @@ class TodoListFeature extends Feature
 
 We would then declare the `TodoListFeature` in our main `AppFeatures` Feature like so
 
-``` php 
+``` php
 
-<?php 
+<?php
 
-use MyTodos\Features\TodoListFeature
+use App\Features\TodoListFeature
 use Lantern\Features\Feature;
 
 class TodoListFeature extends Feature
@@ -53,10 +53,10 @@ When we come to build the functionality to update a to-do item we might want to:
 * check if the user has the correct permissions to view the form and make the change
 * get the current text for the to-do item for the form
 
-``` php 
+``` php
 <?php
 
-namespace MyTodos\Features\TodoList;
+namespace App\Features\TodoList;
 
 use Lantern\Features\Action;
 use Lantern\Features\ActionResponse;
@@ -70,7 +70,7 @@ class UpdateTodo extends Action
         $this->todo = $todo;
         $this->list = $todo->list();
     }
-    
+
     public function prepare(): ActionResponse
     {
         return $this->success([
@@ -78,7 +78,7 @@ class UpdateTodo extends Action
             'todoText'  => $this->todo->text
         ]);
     }
-    
+
     public function perform($text): ActionResponse
     {
         if ($this->list->archived) {
@@ -90,7 +90,7 @@ class UpdateTodo extends Action
             'text' => $text,
             'completed' => false
         ]);
-        
+
         $item->save();
 
         return $this->success(compact('item'));
@@ -104,7 +104,7 @@ class UpdateTodo extends Action
 ```php
 <?php
 
-namespace MyTodos\Features\TodoList;
+namespace App\Features\TodoList;
 
 use Lantern\Features\Action;
 use Lantern\Features\ActionResponse;
@@ -116,7 +116,7 @@ protected TodoList $list;
     public function __construct(TodoList $list) {
         $this->list = $list;
     }
-    
+
     public function perform($text): ActionResponse
     {
         if ($this->list->archived) {
@@ -128,7 +128,7 @@ protected TodoList $list;
             'text' => $text,
             'completed' => false
         ]);
-        
+
         $item->save();
 
         return $this->success(compact('item'));

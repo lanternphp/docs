@@ -152,9 +152,9 @@ Please note that constraints can also be declared in your [`Actions`](actions.ht
 For info on the available methods of the `ConstraintsBuilder` see [Constraints](constraints.html).
 :::
 
-## Multiple Feature graphs
+## Multiple Feature stacks
 
-It's possible to work with multiple `Feature` graphs, thus giving you a way of splitting your `Actions` into groups.
+It's possible to work with multiple `Feature` stacks, thus giving you a way of splitting your `Actions` into groups.
 
 To do this, simply specify a `const STACK = 'my-stack';` onto your top-most Feature.
 

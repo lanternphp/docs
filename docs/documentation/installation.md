@@ -59,7 +59,7 @@ class AppFeatures extends Feature
 
 This top-level Feature group will need to be declared to Lantern from `AppServiceProvider` within the `boot` method.
 
-Lantern is configured by calling static methods on the `Lantern\Lantern` class. We use the `setUp()` method to declare the
+Lantern is configured by calling static methods on the `Lantern\Lantern` class. We use the `register()` method to declare the
 base feature group.
 
 ``` php
@@ -79,10 +79,29 @@ class AppServiceProvider extends ServiceProvider
 
     protected function setupLantern()
     {
-        Lantern::setUp(AppFeatures::class);
+        Lantern::register(AppFeatures::class);
     }
 }
 ```
+
+::: tip Multiple Feature Stacks
+You can register multiple top-level feature stacks in a single call:
+```php
+Lantern::register(AppFeatures::class, AdminFeatures::class);
+```
+See [Multiple Feature Stacks](/documentation/features.html#multiple-feature-stacks) for more information.
+:::
+
+::: warning Deprecated setUp() Method
+The `setUp()` method is deprecated and will be removed in a future version. Please migrate to using `register()` instead:
+```php
+// Old (deprecated)
+Lantern::setUp(AppFeatures::class);
+
+// New (recommended)
+Lantern::register(AppFeatures::class);
+```
+:::
 
 ## Directory path
 
@@ -104,7 +123,7 @@ See the [Laravel documentation](https://laravel.com/docs/master/helpers#method-b
 
 If your system requires a executable outside these directories, then you will need to provide this location to Lantern
 in order to use that binary as a `constraint`. You can do this via the `pathDirs` method, which you should call
-before the `setup` method in `AppServiceProvider`.
+before the `register` method in `AppServiceProvider`.
 
 ``` php
 
@@ -129,7 +148,7 @@ class AppServiceProvider extends ServiceProvider
             '/var/www/bin',
         ]);
 
-        Lantern::setUp(App\Features::class);
+        Lantern::register(App\Features::class);
     }
 }
 
